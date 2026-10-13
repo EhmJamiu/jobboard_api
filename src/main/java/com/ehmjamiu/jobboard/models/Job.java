@@ -25,6 +25,8 @@ public class Job {
 
     private String description;
 
+    private String category;
+
     private String location;
 
     @Enumerated(EnumType.STRING)

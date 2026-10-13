@@ -1,6 +1,9 @@
 package com.ehmjamiu.jobboard.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Entity
@@ -16,6 +19,9 @@ public class JobSeeker {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Email @Column(nullable = false) @NotBlank(message="Email cannot be blank")
+    String email;
+
     private String firstName;
 
     private String lastName;
@@ -24,7 +30,7 @@ public class JobSeeker {
 
     private String skills;
 
-    private String experiences;
+    private String experience;
 
 
 }
