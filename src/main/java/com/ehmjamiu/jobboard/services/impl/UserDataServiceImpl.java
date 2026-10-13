@@ -3,8 +3,7 @@ package com.ehmjamiu.jobboard.services.impl;
 import com.ehmjamiu.jobboard.dtos.requests.EmployerDto;
 import com.ehmjamiu.jobboard.dtos.requests.EmployerRequest;
 import com.ehmjamiu.jobboard.dtos.requests.JobSeekerRequest;
-import com.ehmjamiu.jobboard.dtos.responses.EmployerResponse;
-import com.ehmjamiu.jobboard.dtos.responses.JobSeekerResponse;
+import com.ehmjamiu.jobboard.dtos.responses.*;
 import com.ehmjamiu.jobboard.mapper.EmployerMapper;
 import com.ehmjamiu.jobboard.mapper.JobSeekerMapper;
 import com.ehmjamiu.jobboard.models.Employer;
@@ -19,6 +18,8 @@ import com.ehmjamiu.jobboard.services.UserDataService;
 import org.springframework.stereotype.Service;
 import com.ehmjamiu.jobboard.exceptions.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -140,5 +141,98 @@ public class UserDataServiceImpl implements UserDataService {
         if(user == null) throw new UserDoesNotExist("User is not authenticated yet");
         Employer employer = employerRepository.findByUser(user).orElseThrow(()-> new UserDoesNotExist("No user data found, add your data first"));
         return employerMapper.toEmployerResponse(employer);
+    }
+
+    @Override
+    public AllUserResponse getAllUserData() {
+        //validate the role - not yet implemented
+        //roleUtils.validateSingleRole(UserRole.ADMIN);
+        List<Employer> employerList = employerRepository.findAll();
+        List<JobSeeker> jobSeekerList = jobSeekerRepository.findAll();
+        List<Object> allUserTogether = new ArrayList<>();
+        employerList.forEach(employer -> allUserTogether.add(
+                new EmployerResponse(employer.getId(), employer.getCompanyName(), employer.getCompanyDescription(),
+                                    employer.getLogoUrl(), employer.getWebsiteUrl(), employer.getUser().getEmail())));
+        jobSeekerList.forEach(jobSeeker -> allUserTogether.add(
+                new JobSeekerResponse(jobSeeker.getId(), jobSeeker.getUser().getEmail(),jobSeeker.getExperience(),
+                        jobSeeker.getFirstName(),jobSeeker.getLastName(),jobSeeker.getResumeUrl(),jobSeeker.getSkills())));
+
+        return new AllUserResponse(allUserTogether);
+    }
+
+    @Override
+    public AllUserResponse getAllUser() {
+        //validate the role - not yet implemented
+        //roleUtils.validateSingleRole(UserRole.ADMIN);
+        List<User> users = userRepository.findAll();
+        List<UserDto> userDtoList = new ArrayList<>();
+        users.forEach(user -> userDtoList.add(
+                new UserDto(user.getId(),user.getEmail(),user.getRole(),user.getCreatedAt(),user.getUpdatedAt())));
+
+        return new AllUserResponse(userDtoList);
+    }
+
+    @Override
+    public AllUserResponse getAllJobSeeker() {
+        //validate the role - not yet implemented
+        //roleUtils.validateSingleRole(UserRole.ADMIN);
+        List<JobSeeker> jobSeekers = jobSeekerRepository.findAll();
+        List<JobSeekerDto> jobSeekerDtoList = new ArrayList<>();
+        jobSeekers.forEach(jobSeeker -> jobSeekerDtoList.add(
+                new JobSeekerDto(jobSeeker.getId(), jobSeeker.getFirstName(), jobSeeker.getLastName(),
+                        jobSeeker.getEmail(),  jobSeeker.getUser().getRole(),
+                        jobSeeker.getResumeUrl(), jobSeeker.getSkills(), jobSeeker.getExperience())));
+
+        return new AllUserResponse(jobSeekerDtoList);
+    }
+
+    @Override
+    public AllUserResponse getAllEmployer() {
+        //validate the role - not yet implemented
+        //roleUtils.validateSingleRole(UserRole.ADMIN);
+        List<Employer> jobSeekers = employerRepository.findAll();
+        List<EmployerDto> employerDtoList = new ArrayList<>();
+        jobSeekers.forEach(employer -> employerDtoList.add(
+                new EmployerDto(employer.getUser().getEmail(), employer.getCompanyName(), employer.getCompanyDescription(),
+                        employer.getLogoUrl(), employer.getWebsiteUrl(), employer.getUser().getId())));
+
+        return new AllUserResponse(employerDtoList);
+    }
+
+    @Override
+    public void deleteJobSeekerById(Long id) {
+        //validate the role - not yet implemented
+        //roleUtils.validateSingleRole(UserRole.ADMIN);
+        if (id==null || !jobSeekerRepository.existsById(id)){
+            throw new CustomBadRequest("Job Seeker with this id: " + id + " does not exist");
+        }
+        Optional<JobSeeker> jobSeeker = jobSeekerRepository.findById(id);
+        if(jobSeeker.isPresent()){
+            JobSeeker seeker = jobSeeker.get();
+            if (seeker.getResumeUrl()!=null && !seeker.getResumeUrl().isEmpty()){
+                cloudinaryUploadService.deleteFile(seeker.getResumeUrl());
+            }
+        }
+        employerRepository.deleteById(id);
+    }
+
+
+
+    @Override
+    public void deleteEmployerById(Long id) {
+        //validate the role - not yet implemented
+        //roleUtils.validateSingleRole(UserRole.ADMIN);
+
+        if (id==null || !jobSeekerRepository.existsById(id)){
+            throw new CustomBadRequest("Employer with this id: " + id + " does not exist");
+        }
+        Optional<Employer> employer = employerRepository.findById(id);
+        if(employer.isPresent()){
+            Employer emp = employer.get();
+            if (emp.getLogoUrl()!=null && !emp.getLogoUrl().isEmpty()){
+                cloudinaryUploadService.deleteFile(emp.getLogoUrl());
+            }
+        }
+        employerRepository.deleteById(id);
     }
 }

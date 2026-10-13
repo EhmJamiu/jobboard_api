@@ -3,6 +3,7 @@ package com.ehmjamiu.jobboard.services;
 import com.ehmjamiu.jobboard.dtos.requests.EmployerDto;
 import com.ehmjamiu.jobboard.dtos.requests.EmployerRequest;
 import com.ehmjamiu.jobboard.dtos.requests.JobSeekerRequest;
+import com.ehmjamiu.jobboard.dtos.responses.AllUserResponse;
 import com.ehmjamiu.jobboard.dtos.responses.EmployerResponse;
 import com.ehmjamiu.jobboard.dtos.responses.JobSeekerResponse;
 import com.ehmjamiu.jobboard.models.JobSeeker;
@@ -22,5 +23,10 @@ public interface UserDataService {
     EmployerResponse findEmployerByEmail(String email);
 
     //Admin endpoints
-
+    AllUserResponse getAllUserData();
+    AllUserResponse getAllUser();
+    AllUserResponse getAllJobSeeker();
+    AllUserResponse getAllEmployer();
+    void deleteJobSeekerById(Long id);
+    void deleteEmployerById(Long id);
 }
