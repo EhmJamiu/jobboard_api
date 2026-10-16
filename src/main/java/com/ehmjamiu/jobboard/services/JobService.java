@@ -1,5 +1,6 @@
 package com.ehmjamiu.jobboard.services;
 
+import com.ehmjamiu.jobboard.dtos.requests.JobRequest;
 import com.ehmjamiu.jobboard.dtos.responses.JobResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,4 +20,8 @@ public interface JobService {
     Page<JobResponse> filterAllByAdvanceSearch(String keyword, Pageable pageable);
     Page<JobResponse> filterJob(String title, String description, String location, String category, String companyName, Double minSalary,
             Double maxSalary, LocalDateTime startAt, LocalDateTime endAt, Pageable pageable);
+
+    void postJob(JobRequest request, String email);
+    void updateJob(JobRequest request, Long id);
+    void deleteJob(Long id, String email);
 }

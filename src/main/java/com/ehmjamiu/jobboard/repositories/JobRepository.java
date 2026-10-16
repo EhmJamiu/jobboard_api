@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 
 
 @Repository
@@ -25,4 +26,15 @@ public interface JobRepository extends JpaRepository<Job, Long>, JpaSpecificatio
                 job.description ILIKE CONCAT('%', :keyword, '%') OR
                 job.category ILIKE CONCAT('%', :keyword, '%')""")
     Page<JobResponse> advanceSearch(@Param("keyword") String keyword, Pageable pageable);
+
+
+    @Query("""
+        select job from Job job where
+        lower(job.title) like lower(concat('%', :search, '%')) or
+        lower(job.description) like lower(concat('%', :search, '%')) or
+        lower(job.category) like lower(concat('%', :search, '%')) or
+        lower(job.location) like lower(concat('%', :search, '%')) or
+        lower(job.employer.companyName) like lower(concat('%', :search, '%') )
+        """)
+    List<Job> searchJob(String searchedQuery);
 }
