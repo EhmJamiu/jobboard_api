@@ -3,8 +3,6 @@ package com.ehmjamiu.jobboard.repositories;
 import com.ehmjamiu.jobboard.models.JobSeeker;
 import com.ehmjamiu.jobboard.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import java.lang.ScopedValue;
 import java.util.List;
 import java.util.Optional;
 

@@ -3,6 +3,7 @@ package com.ehmjamiu.jobboard.controllers;
 
 import com.ehmjamiu.jobboard.dtos.requests.JobAlertRequest;
 import com.ehmjamiu.jobboard.services.JobAlertService;
+import com.ehmjamiu.jobboard.services.JwtService;
 import com.ehmjamiu.jobboard.utils.responseHandler.ResponseHandler;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,9 +14,12 @@ import org.springframework.web.bind.annotation.*;
 //@PreAuthorize("hasRole('')")
 public class JobAlertController {
 
+    private final JwtService jwtService;
+
     private final JobAlertService jobAlertService;
 
-    public JobAlertController(JobAlertService jobAlertService) {
+    public JobAlertController(JwtService jwtService, JobAlertService jobAlertService) {
+        this.jwtService = jwtService;
         this.jobAlertService = jobAlertService;
     }
 

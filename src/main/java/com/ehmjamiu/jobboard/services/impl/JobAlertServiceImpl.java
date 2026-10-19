@@ -94,7 +94,7 @@ public class JobAlertServiceImpl implements JobAlertService {
 
     @Scheduled(cron = "0 0 8 * * ?")
     public void sendDailyJobAlerts() {
-        List<JobAlert> jobAlerts = jobAlertRepository.findAllByFrequency((AlertFrequency.DAILY);
+        List<JobAlert> jobAlerts = jobAlertRepository.findAllByFrequency((AlertFrequency.DAILY));
         sendJobAlert(jobAlerts,"Daily Job Alerts");
 
     }

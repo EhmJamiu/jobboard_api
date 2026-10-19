@@ -4,6 +4,8 @@ package com.ehmjamiu.jobboard.services;
 
 
 import com.ehmjamiu.jobboard.models.Job;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -15,8 +17,11 @@ import java.util.List;
 
 @Service
 public class EmailService {
-    private final   JavaMailSender mailSender;
+
+
+    private final JavaMailSender mailSender;
     private final TemplateEngine templateEngine;
+
 
     public EmailService(JavaMailSender mailSender, TemplateEngine templateEngine) {
         this.mailSender = mailSender;
@@ -46,7 +51,7 @@ public class EmailService {
             helper.setText(htmlContent,true);
             mailSender.send(mimeMessage);
         } catch (MessagingException e) {
-            throw new RuntimeException(e.getMessage);
+            throw new RuntimeException(e.getMessage());
         }
     }
 }

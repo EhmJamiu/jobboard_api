@@ -7,6 +7,7 @@ import com.ehmjamiu.jobboard.dtos.responses.EmployerResponse;
 import com.ehmjamiu.jobboard.dtos.responses.JobResponse;
 import com.ehmjamiu.jobboard.dtos.responses.JobSeekerResponse;
 import com.ehmjamiu.jobboard.models.JobSeeker;
+import com.ehmjamiu.jobboard.services.JwtService;
 import com.ehmjamiu.jobboard.services.UserDataService;
 import com.ehmjamiu.jobboard.utils.responseHandler.ResponseHandler;
 import org.springframework.http.HttpStatus;
@@ -18,9 +19,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/user")
 public class UserController {
 
+    private final JwtService jwtService;
+
     private final UserDataService userDataService;
 
-    public UserController(UserDataService userDataService) {
+    public UserController(JwtService jwtService, UserDataService userDataService) {
+        this.jwtService = jwtService;
         this.userDataService = userDataService;
     }
 

@@ -3,6 +3,7 @@ package com.ehmjamiu.jobboard.controllers;
 import com.ehmjamiu.jobboard.dtos.responses.JobId;
 import com.ehmjamiu.jobboard.dtos.responses.SavedJobResponse;
 import com.ehmjamiu.jobboard.models.SavedJob;
+import com.ehmjamiu.jobboard.services.JwtService;
 import com.ehmjamiu.jobboard.services.SavedJobService;
 import com.ehmjamiu.jobboard.utils.responseHandler.ResponseHandler;
 import org.springframework.http.HttpStatus;
@@ -13,9 +14,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api")
 //PreAuthorize("hasRole('JOB_SEEKER')")
 public class JobSeekerController {
+    private final JwtService jwtService;
     private final SavedJobService savedJobService;
 
-    public JobSeekerController(SavedJobService savedJobService) {
+    public JobSeekerController(JwtService jwtService, SavedJobService savedJobService) {
+        this.jwtService = jwtService;
         this.savedJobService = savedJobService;
     }
 

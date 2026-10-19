@@ -5,6 +5,7 @@ import com.ehmjamiu.jobboard.dtos.responses.applications.JobSeekerApplication;
 import com.ehmjamiu.jobboard.dtos.responses.applications.ApplicationResponse;
 import com.ehmjamiu.jobboard.models.enums.ApplicationStatus;
 import com.ehmjamiu.jobboard.services.ApplicationService;
+import com.ehmjamiu.jobboard.services.JwtService;
 import com.ehmjamiu.jobboard.utils.responseHandler.ResponseHandler;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,10 +15,12 @@ import java.util.List;
 
 @RestController
 public class ApplicationController {
+    private final JwtService jwtService;
 
     private  final ApplicationService applicationService;
 
-    public ApplicationController(ApplicationService applicationService) {
+    public ApplicationController(JwtService jwtService, ApplicationService applicationService) {
+        this.jwtService = jwtService;
         this.applicationService = applicationService;
     }
 

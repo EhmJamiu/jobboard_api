@@ -2,6 +2,8 @@ package com.ehmjamiu.jobboard.services;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.ehmjamiu.jobboard.exceptions.CustomBadRequest;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -13,10 +15,11 @@ import java.util.Map;
 
 @Service
 public class CloudinaryUploadService {
-    @Autowired
+
     private Cloudinary cloudinary;
 
-    public String uploadFile(@org.jetbrains.annotations.UnknownNullability String file, String folderName) {
+
+    public String uploadFile(@NotNull String file, String folderName) {
         try {
             String timestamp = String.valueOf(System.currentTimeMillis());
             String fileName = file.getOriginalFilename();
@@ -26,7 +29,7 @@ public class CloudinaryUploadService {
                 throw new CustomBadRequest("This file format is not supported");
             }
             System.out.println(contentType);
-            Map uploadParams;
+            Map<?,?> uploadParams;
             if(contentType.startsWith("image/")){
                 uploadParams= ObjectUtils.asMap(
                         "resource_type","image",

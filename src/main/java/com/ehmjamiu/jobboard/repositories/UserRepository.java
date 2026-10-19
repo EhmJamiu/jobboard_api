@@ -6,8 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.lang.ScopedValue;
-
+import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -17,5 +16,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
             SELECT user FROM User user WHERE user.email=:email""")
     User findByEmail(@Param("email") String email);
 
-    <T> ScopedValue<T> findUserByEmail(String email);
+    Optional<User> findUserByEmail(String email);
 }

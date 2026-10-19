@@ -42,7 +42,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
     @Query("""
         select applications from Application applications
          join fetch applications.job job
-         where applications.id=:applicationId 
+         where applications.id=:applicationId
          and job.id=:jobId and applications.jobSeeker.id=:jobSeekerId""")
-    Optional<Object> findApplicationByApplicationJobIdJobSeekerId(Long applicationId, Long jobId, Long id);
+    Optional<Application> findApplicationByApplicationJobIdJobSeekerId(Long applicationId, Long jobId, Long id);
 }
