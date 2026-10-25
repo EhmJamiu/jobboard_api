@@ -13,6 +13,7 @@ import com.ehmjamiu.jobboard.utils.responseHandler.ResponseHandler;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -43,7 +44,7 @@ public class UserController {
 
     //Authorization required
     @GetMapping("job-seeker")
-    //@PreAuthorized("hasRole(JOB_SEEKER)")
+    @PreAuthorize("hasRole('JOB_SEEKER')")
     public ResponseEntity<?> getJobSeeker(@RequestHeader("Authorization") String authHeader) {
         String token = authHeader.substring(7);
         String email = jwtService.extractEmail(token);

@@ -30,7 +30,7 @@ import java.util.Map;
 public class SecurityConfig {
 
     //private final UserDetailsService userDetailsService;
-    @Autowired
+
     private final JwtFilter filter;
 
 
@@ -45,8 +45,8 @@ public class SecurityConfig {
         return http
                 .csrf(customizer -> customizer.disable())
                 .authorizeHttpRequests(request ->
-                        request.requestMatchers(
-                                "api/auth/**", "/api/jobs", "/api/jobs/{id}","/api/jobs/**",
+                        request.requestMatchers("/hello", "/swagger-ui/index.html", "/v3/api-docs",
+                                "/api/auth/**", "/api/jobs", "/api/jobs/{id}","/api/jobs/**", "/api/auth/register",
                                         //"/oauth2/**",
                                 "/login/**",
                                 "/oauth/**","/api/unsubscribe/**").permitAll()
@@ -55,7 +55,7 @@ public class SecurityConfig {
                                 //employer
                                 .requestMatchers("/api/employer/**", "/api/jobs/{id}/applications").hasRole("EMPLOYER")
                                 //admin
-                                .requestMatchers("apli/admin/**").hasRole("ADMIN").anyRequest().authenticated())
+                                .requestMatchers("/api/admin/**").hasRole("ADMIN").anyRequest().authenticated())
                 .exceptionHandling(e -> e.authenticationEntryPoint(
                         (request, response, authException) -> {
                             response.setContentType(MediaType.APPLICATION_JSON_VALUE);

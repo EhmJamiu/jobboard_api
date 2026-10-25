@@ -4,7 +4,9 @@ import com.ehmjamiu.jobboard.dtos.requests.SavedJobDto;
 import com.ehmjamiu.jobboard.dtos.responses.JobResponse;
 import com.ehmjamiu.jobboard.dtos.responses.SavedJobResponse;
 import com.ehmjamiu.jobboard.models.SavedJob;
+import org.springframework.stereotype.Component;
 
+@Component
 public class SavedJobMapper {
 
     public SavedJobResponse toSavedJobResponse(SavedJob savedJob) {

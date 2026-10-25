@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -19,7 +20,7 @@ public class CloudinaryUploadService {
     private Cloudinary cloudinary;
 
 
-    public String uploadFile(@NotNull String file, String folderName) {
+    public String uploadFile(MultipartFile file, String folderName) {
         try {
             String timestamp = String.valueOf(System.currentTimeMillis());
             String fileName = file.getOriginalFilename();

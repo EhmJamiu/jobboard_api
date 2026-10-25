@@ -9,6 +9,7 @@ import com.ehmjamiu.jobboard.services.JwtService;
 import com.ehmjamiu.jobboard.utils.responseHandler.ResponseHandler;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public class ApplicationController {
     }
 
     @PostMapping("/jobs/{id}/apply")
-    //@PreAuthorize("hasRole('JOB_SEEKEER')")
+    @PreAuthorize("hasRole('JOB_SEEKEER')")
     public ResponseEntity<?> applyJob(@PathVariable Long jobId, @RequestHeader("Authorization") String authHeader,
                                       @ModelAttribute ApplicationRequest jobApplicationRequest) {
         String token = authHeader.substring(7);
@@ -35,7 +36,7 @@ public class ApplicationController {
     }
 
     @DeleteMapping("jobs/{applicationId}/{jobId}")
-    //@PreAuthorize("hasRole('JOB_SEEKER')")
+    @PreAuthorize("hasRole('JOB_SEEKER')")
     public ResponseEntity<?> deleteJobSeekerApplication(@PathVariable Long applicationId, @PathVariable Long jobId,@RequestHeader("Authorization") String authHeader) {
         String token = authHeader.substring(7);
         String email = jwtService.extractEmail(token);
@@ -44,7 +45,7 @@ public class ApplicationController {
     }
 
     @GetMapping("/job-seeker/applications")
-    //@PreAuthorize("hasRole('JOB_SEEKER')")
+    @PreAuthorize("hasRole('JOB_SEEKER')")
     public ResponseEntity<?> getAllApplicationsByJobSeeker(@RequestHeader("Authorization") String authHeader) {
         String token = authHeader.substring(7);
         String email = jwtService.extractEmail(token);
@@ -53,7 +54,7 @@ public class ApplicationController {
     }
 
     @GetMapping("/jobs/applications")
-    //@PreAuthorize("hasRole('EMPLOYER')")
+    @PreAuthorize("hasRole('EMPLOYER')")
     public ResponseEntity<?> getAllApplicationsByEmployee(@RequestHeader("Authorization") String authHeader) {
         String token = authHeader.substring(7);
         String email = jwtService.extractEmail(token);
@@ -62,7 +63,7 @@ public class ApplicationController {
     }
 
     @GetMapping("/jobs/{jobId}/applications")
-    //@PreAuthorize("hasRole('EMPLOYER')")
+    @PreAuthorize("hasRole('EMPLOYER')")
     public ResponseEntity<?> getAllApplicationsByJob(@PathVariable Long jobId, @RequestHeader("Authorization") String authHeader) {
         String token = authHeader.substring(7);
         String email = jwtService.extractEmail(token);
@@ -71,7 +72,7 @@ public class ApplicationController {
     }
 
     @PutMapping("/jobs/{applicationId}/{jobSeekerId}")
-    //@PreAuthorize("hasRole('EMPLOYER')")
+    @PreAuthorize("hasRole('EMPLOYER')")
     public ResponseEntity<?> updateApplication(@PathVariable Long applicationId,
                                                @PathVariable Long jobSeekerId,
                                                @RequestHeader("Authorization") String authHeader,

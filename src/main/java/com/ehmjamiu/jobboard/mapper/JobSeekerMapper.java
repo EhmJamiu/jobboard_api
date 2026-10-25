@@ -4,7 +4,9 @@ import com.ehmjamiu.jobboard.dtos.requests.JobSeekerRequest;
 import com.ehmjamiu.jobboard.dtos.responses.JobSeekerResponse;
 import com.ehmjamiu.jobboard.models.JobSeeker;
 import com.ehmjamiu.jobboard.models.User;
+import org.springframework.stereotype.Component;
 
+@Component
 public class JobSeekerMapper {
 
     public JobSeeker toJobSeeker (JobSeekerRequest jobSeekerRequest){

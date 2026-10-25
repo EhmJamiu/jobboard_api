@@ -7,7 +7,9 @@ import com.ehmjamiu.jobboard.dtos.responses.applications.JobData;
 import com.ehmjamiu.jobboard.models.Application;
 import com.ehmjamiu.jobboard.models.Job;
 import com.ehmjamiu.jobboard.models.JobSeeker;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ApplicationMapper {
 
     public void toApplication(ApplicationRequest request) {

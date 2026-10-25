@@ -46,14 +46,14 @@ public class SavedJobServiceImpl implements SavedJobService {
     }
 
     @Override
-    public Stream<SavedJobResponse> getAllSavedJobByJobSeeker(String email) {
+    public List<SavedJobResponse> getAllSavedJobByJobSeeker(String email) {
         if(email==null){
             throw new CustomBadRequest("Job seekerEmail is null");
         }
         JobSeeker jobSeeker = jobSeekerRepository.findJobSeekerByEmail(email).orElseThrow(()
                 -> new CustomNotFound("Complete your job seeker details"));
         List<SavedJob> savedJob = savedJobRepository.findAllByJobSeeker(jobSeeker);
-        return savedJob.stream().map(savedJobMapper::toSavedJobResponse);
+        return savedJob.stream().map(savedJobMapper::toSavedJobResponse).toList();
     }
 //existsByJobsAndJobSeekers
     @Override

@@ -26,7 +26,7 @@ public class JwtFilter extends OncePerRequestFilter {
     public JwtFilter(JwtService jwtService) {
         this.jwtService = jwtService;
     }
-    @Autowired
+
     ApplicationContext context;
 
 
@@ -46,8 +46,10 @@ public class JwtFilter extends OncePerRequestFilter {
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
-        filterChain.doFilter(request, response);
+
         }
+
+        filterChain.doFilter(request, response);
 
     }
 }

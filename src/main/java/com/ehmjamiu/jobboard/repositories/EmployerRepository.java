@@ -12,4 +12,6 @@ public interface EmployerRepository extends JpaRepository<Employer, Long> {
     Employer findEmployerByUser(User user);
 
     Optional<Employer> findByUser(User user);
+
+    void deleteByUser(User user);
 }

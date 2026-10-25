@@ -19,4 +19,6 @@ public interface UserService {
     void changePassword(@NotBlank(message = "Old password must not be blank") String s, @NotBlank(message = "New password cannot be blank") String s1, @Email(message = "Enter appropriate email") String email);
 
     void changeUserRole(String email, UserRole role);
+
+
 }

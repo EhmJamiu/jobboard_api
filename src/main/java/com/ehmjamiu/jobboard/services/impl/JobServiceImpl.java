@@ -8,11 +8,14 @@ import com.ehmjamiu.jobboard.mapper.JobMapper;
 import com.ehmjamiu.jobboard.models.Employer;
 import com.ehmjamiu.jobboard.models.Job;
 import com.ehmjamiu.jobboard.models.User;
+import com.ehmjamiu.jobboard.models.enums.UserRole;
 import com.ehmjamiu.jobboard.repositories.EmployerRepository;
 import com.ehmjamiu.jobboard.repositories.JobRepository;
 import com.ehmjamiu.jobboard.repositories.UserRepository;
 import com.ehmjamiu.jobboard.repositories.specifications.*;
 import com.ehmjamiu.jobboard.services.JobService;
+import com.ehmjamiu.jobboard.utils.RoleUtils;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -25,13 +28,15 @@ import java.util.stream.Stream;
 public class JobServiceImpl implements JobService {
 
     private final JobMapper jobMapper;
+    private final RoleUtils roleUtils;
 
     private final UserRepository userRepository;
     private final JobRepository jobRepository;
     private final EmployerRepository employerRepository;
 
-    public JobServiceImpl(JobMapper jobMapper, UserRepository userRepository, JobRepository jobRepository, EmployerRepository employerRepository) {
+    public JobServiceImpl(JobMapper jobMapper, RoleUtils roleUtils, UserRepository userRepository, JobRepository jobRepository, EmployerRepository employerRepository) {
         this.jobMapper = jobMapper;
+        this.roleUtils = roleUtils;
         this.userRepository = userRepository;
 
         this.jobRepository = jobRepository;
@@ -40,6 +45,7 @@ public class JobServiceImpl implements JobService {
 
 
     @Override
+    @Cacheable(value = "allJobs", key = "#pageable.pageNumber + '_' + #pageable.pageSize")
     public Page<JobResponse> getAllJobs(Pageable pageable) {
         return jobRepository.findAll(pageable)
                 .map(job -> jobMapper.toJobResponse(job));
@@ -85,6 +91,8 @@ public class JobServiceImpl implements JobService {
     @Override
     public void postJob(JobRequest request, String email) {
         //validate the employer role
+        roleUtils.validateSingleRole(UserRole.EMPLOYER);
+
         if(request.description() ==null || !request.title().isEmpty() || request.title() == null || request.description().isEmpty()){
             throw new CustomBadRequest("Job title and description is/are required");
         }
@@ -129,7 +137,8 @@ public class JobServiceImpl implements JobService {
         Employer employer = employerRepository.findByUser(user).orElseThrow(()
                 ->new UserDoesNotExist("This employer does not exist"));
 
-        //roleUtils.validateAnyRoles(UserRole.ADMIN,employers.getUser().getRole());
+        roleUtils.validateAnyRoles(UserRole.ADMIN,employer.getUser().getRole());
+
         Job jobs = jobRepository.findById(id).orElseThrow(()->new CustomNotFound("This job does not exist"));
         jobRepository.deleteById(jobs.getId());
     }

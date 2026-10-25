@@ -16,4 +16,5 @@ public interface JobSeekerRepository extends JpaRepository<JobSeeker, Long> {
     Optional<Object> findJobSeekerByUser(User user);
 
 
+    void deleteByUser(User user);
 }

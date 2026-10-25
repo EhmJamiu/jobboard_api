@@ -1,6 +1,7 @@
 package com.ehmjamiu.jobboard.services.impl;
 
 import com.ehmjamiu.jobboard.dtos.requests.EmployerDto;
+import com.ehmjamiu.jobboard.dtos.requests.EmployerDto2;
 import com.ehmjamiu.jobboard.dtos.requests.EmployerRequest;
 import com.ehmjamiu.jobboard.dtos.requests.JobSeekerRequest;
 import com.ehmjamiu.jobboard.dtos.responses.*;
@@ -55,7 +56,7 @@ public class UserDataServiceImpl implements UserDataService {
         JobSeeker newJobSeeker = existingJobSeeker.orElseGet(JobSeeker::new);
 
         if(jobSeeker.resumeFile() != null && !jobSeeker.resumeFile().isEmpty()){
-            cloudinaryUploadService.uploadFile(String.valueOf(jobSeeker.resumeFile()), "resumeFile");
+            cloudinaryUploadService.uploadFile(jobSeeker.resumeFile(), "resumeFile");
         }
 
         JobSeeker saveJobSeeker = jobSeekerRepository.save(newJobSeeker) ;
@@ -74,7 +75,7 @@ public class UserDataServiceImpl implements UserDataService {
         JobSeeker existingJobSeeker = (JobSeeker) jobSeekerRepository.findJobSeekerById(id).orElseThrow(()
         -> new CustomNotFound("Job Seeker with id: "+id+ "does not exist"));
         if(jobSeeker.resumeFile() !=null && !jobSeeker.resumeFile().isEmpty()){
-            cloudinaryUploadService.uploadFile(String.valueOf(jobSeeker.resumeFile()), "resumeFile");
+            cloudinaryUploadService.uploadFile(jobSeeker.resumeFile(), "resumeFile");
         }
         JobSeeker savedJobSeeker = jobSeekerRepository.save(existingJobSeeker);
         return jobSeekerMapper.toJobSeekerResponse(savedJobSeeker);
@@ -111,7 +112,7 @@ public class UserDataServiceImpl implements UserDataService {
                 -> new CustomNotFound("Job Seeker with id: "+id+ "does not exist"));
 
         if(employer.companyLogo() !=null && !employer.companyLogo().isEmpty()){
-            cloudinaryUploadService.uploadFile(String.valueOf(employer.companyLogo()), "companyLogo");
+            cloudinaryUploadService.uploadFile(employer.companyLogo(), "companyLogo");
         }
 
         Employer saveEmployer = employerRepository.save(existingEmployer);
@@ -191,9 +192,9 @@ public class UserDataServiceImpl implements UserDataService {
         //validate the role - not yet implemented
         //roleUtils.validateSingleRole(UserRole.ADMIN);
         List<Employer> jobSeekers = employerRepository.findAll();
-        List<EmployerDto> employerDtoList = new ArrayList<>();
+        List<EmployerDto2> employerDtoList = new ArrayList<>();
         jobSeekers.forEach(employer -> employerDtoList.add(
-                new EmployerDto(employer.getUser().getEmail(), employer.getCompanyName(), employer.getCompanyDescription(),
+                new EmployerDto2(employer.getUser().getEmail(), employer.getCompanyName(), employer.getCompanyDescription(),
                         employer.getLogoUrl(), employer.getWebsiteUrl(), employer.getUser().getId())));
 
         return new AllUserResponse(employerDtoList);

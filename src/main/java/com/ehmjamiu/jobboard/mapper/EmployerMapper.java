@@ -4,14 +4,16 @@ import com.ehmjamiu.jobboard.dtos.requests.EmployerDto;
 import com.ehmjamiu.jobboard.dtos.responses.EmployerResponse;
 import com.ehmjamiu.jobboard.models.Employer;
 import com.ehmjamiu.jobboard.models.User;
+import org.springframework.stereotype.Component;
 
+@Component
 public class EmployerMapper {
 
     public Employer toEmployer(EmployerDto request) {
         Employer employer = new Employer();
         employer.setCompanyName(request.companyName());
         employer.setCompanyDescription(request.companyDescription());
-        employer.setLogoUrl(request.companyLogo());
+        employer.setLogoUrl(String.valueOf(request.companyLogo()));
         employer.setWebsiteUrl(request.websiteUrl());
 
         User user = new User();

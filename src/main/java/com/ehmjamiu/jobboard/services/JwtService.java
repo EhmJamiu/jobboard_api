@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import javax.crypto.KeyGenerator;
@@ -21,6 +22,12 @@ import java.util.function.Function;
 public class JwtService {
     private String secretKey = "";
 
+    @Value("${jwt.access-token-expiration}")
+    private long accessToken;
+
+    @Value("${jwt.refresh-token-expiration}")
+    private long refreshToken;
+
     public JwtService(){
         try {
             KeyGenerator keyGen = KeyGenerator.getInstance("HmacSHA256");
@@ -32,18 +39,26 @@ public class JwtService {
 
     }
 
-    public String generateAccessToken(String email) {
+    public String generateToken(String email, long expirationTime) {
         Map<String, Object> claims = new HashMap<>();
     return Jwts.builder()
             .claims()
             .add(claims)
             .subject(email)
             .issuedAt(new Date(System.currentTimeMillis()))
-            .expiration(new Date(System.currentTimeMillis() + 60 * 60 * 10))
+            .expiration(new Date(System.currentTimeMillis() + expirationTime))
             .and()
             .signWith(getKey())
             .compact();
 
+    }
+
+    public String generateAccessToken(String subject){
+        return generateToken(subject, accessToken);
+    }
+
+    public String generateRefreshToken(String subject){
+        return generateToken(subject, refreshToken);
     }
 
     private SecretKey getKey() {

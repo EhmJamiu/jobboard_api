@@ -12,7 +12,7 @@ public record EmployerDto(
         @NotBlank @NotNull
         String companyName,
         String companyDescription,
-        String companyLogo,
+        MultipartFile companyLogo,
         String websiteUrl,
         Long userId
 

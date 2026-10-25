@@ -15,11 +15,13 @@ import com.ehmjamiu.jobboard.models.Application;
 import com.ehmjamiu.jobboard.models.Job;
 import com.ehmjamiu.jobboard.models.JobSeeker;
 import com.ehmjamiu.jobboard.models.enums.ApplicationStatus;
+import com.ehmjamiu.jobboard.models.enums.UserRole;
 import com.ehmjamiu.jobboard.repositories.ApplicationRepository;
 import com.ehmjamiu.jobboard.repositories.JobRepository;
 import com.ehmjamiu.jobboard.repositories.JobSeekerRepository;
 import com.ehmjamiu.jobboard.services.ApplicationService;
 import com.ehmjamiu.jobboard.services.CloudinaryUploadService;
+import com.ehmjamiu.jobboard.utils.RoleUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -29,6 +31,7 @@ import java.util.List;
 public class ApplicationServiceImpl implements ApplicationService {
 
     private final ApplicationRepository applicationRepository;
+    private final RoleUtils roleUtils;
 
     private final JobRepository jobRepository;
     private final ApplicationMapper applicationMapper;
@@ -37,8 +40,9 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     private final JobMapper jobMapper;
 
-    public ApplicationServiceImpl(ApplicationRepository applicationRepository, JobRepository jobRepository, ApplicationMapper applicationMapper, JobSeekerRepository jobSeekerRepository, CloudinaryUploadService cloudinaryUploadService, JobMapper jobMapper) {
+    public ApplicationServiceImpl(ApplicationRepository applicationRepository, RoleUtils roleUtils, JobRepository jobRepository, ApplicationMapper applicationMapper, JobSeekerRepository jobSeekerRepository, CloudinaryUploadService cloudinaryUploadService, JobMapper jobMapper) {
         this.applicationRepository = applicationRepository;
+        this.roleUtils = roleUtils;
         this.jobRepository = jobRepository;
         this.applicationMapper = applicationMapper;
         this.jobSeekerRepository = jobSeekerRepository;
@@ -52,8 +56,8 @@ public class ApplicationServiceImpl implements ApplicationService {
         if(jobId==null) {
             throw new CustomBadRequest("Bad request");
         }
-        //validate the role
-        // roleUtils.validateSingleRole(UserRole.JOB_SEEKER);
+        // validate the role
+        roleUtils.validateSingleRole(UserRole.JOB_SEEKER);
         Job job = jobRepository.findById(jobId).orElseThrow(() -> new CustomBadRequest("Job not found"));
         JobSeeker jobSeeker = jobSeekerRepository.findJobSeekerByEmail(email).orElseThrow(() -> new CustomBadRequest("Either you are not authenticated or you need to update your profile"));
         if(applicationRepository.existsByJobAndJobSeeker(job, jobSeeker)){
@@ -68,7 +72,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 throw new CustomBadRequest("There must be a resume");
             }
         }else {
-            resumeUrl =  cloudinaryUploadService.uploadFile(String.valueOf(request.resumeUrl()), "application");
+            resumeUrl =  cloudinaryUploadService.uploadFile(request.resumeUrl(), "application");
         }
 
         Application application = new Application();
@@ -95,7 +99,8 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public List<JobSeekerApplication> getAllMyApplicationsForJobSeeker(String email) {
-        //roleUtils.validateSingleRole(UserRole.JOB_SEEKER);
+
+        roleUtils.validateSingleRole(UserRole.JOB_SEEKER);
         if(email==null) {
             throw new CustomBadRequest("Bad request");
         }
@@ -121,7 +126,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public List<ApplicationResponse> getAllApplicationsByEmployee(String email) {
         //validate the role
-        //roleUtils.validateSingleRole(UserRole.EMPLOYER);
+        roleUtils.validateSingleRole(UserRole.EMPLOYER);
         if(email==null) {
             throw new CustomBadRequest("Bad request");
         }

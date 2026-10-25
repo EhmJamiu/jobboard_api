@@ -45,7 +45,8 @@ public class RoleUtils {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null) {
             return auth.getAuthorities().stream()
-                    .map(GrantedAuthority::getAuthority)
+                    //.map(GrantedAuthority::getAuthority)
+                    .map(authority -> authority.getAuthority())
                     .filter(authority->authority.startsWith("ROLE_"))
                     .map(authority->UserRole.valueOf(authority.substring(5)))
                     .findFirst().orElse(null);
