@@ -15,6 +15,7 @@ import com.ehmjamiu.jobboard.repositories.UserRepository;
 import com.ehmjamiu.jobboard.repositories.specifications.*;
 import com.ehmjamiu.jobboard.services.JobService;
 import com.ehmjamiu.jobboard.utils.RoleUtils;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -53,6 +54,7 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
+    @Cacheable(value = "jobById", key = "#id")
     public JobResponse getJobById(Long id) {
         Job job = jobRepository.findById(id).orElseThrow(() ->
                 new CustomNotFound("Job with id: " + id + " is not found"));
@@ -60,16 +62,19 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
+    @Cacheable(value = "searchJobsByTitle",key = "#keyword + '_' + #pageable.pageNumber + '_' + #pageable.pageSize")
     public Page<JobResponse> filterAllByJobTitle(String keyword, Pageable pageable) {
         return jobRepository.findAllByTitleContainingIgnoreCase(keyword, pageable);
     }
 
     @Override
+    @Cacheable(value = "advancedSearch", key = "#keyword + '_' + #pageable.pageNumber + '_' + #pageable.pageSize")
     public Page<JobResponse> filterAllByAdvanceSearch(String keyword, Pageable pageable) {
         return jobRepository.advanceSearch(keyword, pageable);
     }
 
     @Override
+    @Cacheable(value = "filterJobs", key = "#title+ '_' + #description + #companyName + '_' + #location + '_' + #category + '_' + #minSalary + '_' + #maxSalary + '_' + #startAt + '_' + #endAt + '_' + #pageable.pageNumber + '_' + #pageable.pageSize")
     public Page<JobResponse> filterJob(String title, String description, String location, String category, String companyName, Double minSalary,
                                           Double maxSalary, LocalDateTime startAt, LocalDateTime endAt, Pageable pageable) {
         boolean hasValidSearch = Stream.of(title, description, location, category)
@@ -89,6 +94,7 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
+    @CacheEvict(value = {"allJobs", "advancedSearch", "filterJobs", "searchJobByTitle", "jobById"},allEntries = true)
     public void postJob(JobRequest request, String email) {
         //validate the employer role
         roleUtils.validateSingleRole(UserRole.EMPLOYER);
@@ -119,6 +125,7 @@ public class JobServiceImpl implements JobService {
 
 
     @Override
+    @CacheEvict(value = {"allJobs", "advancedSearch", "filterJobs", "searchJobByTitle", "jobById"}, key = "#id")
     public void updateJob(JobRequest request, Long id) {
         if(request.description() ==null || !request.title().isEmpty() ||request.description().isEmpty()){
             throw new CustomBadRequest("Job title and description is/are required");
@@ -131,6 +138,7 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
+    @CacheEvict(value = {"allJobs", "advancedSearch", "filterJobs", "searchJobByTitle", "jobById"}, key = "#id")
     public void deleteJob(Long id, String email) {
         User user = userRepository.findByEmail(email);
         if(user == null) throw new UserDoesNotExist("This user does not exist");
